@@ -1,0 +1,9 @@
+- hosts: all
+  tasks:
+    - name: install a lot of cool things
+      sudo: yes
+      pkgng: name={{ item }} state=present
+      with_items:
+        - xorg
+        - awesome
+        - clojure
