@@ -1,0 +1,6 @@
+- hosts: all
+  user: ciarand
+  vars:
+    - ssh_user: "{{ lookup('env', 'USER') }}"
+  roles:
+    - role: bootstrap

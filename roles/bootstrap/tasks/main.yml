@@ -1,0 +1,51 @@
+- name: install core utilities
+  pkgng: name={{ item }} state=present
+  with_items:
+    - bash
+    - portupgrade
+    - sudo
+
+- name: add fstab lines
+  lineinfile: >
+    dest=/etc/fstab
+    state=present
+    line="{{ item }}"
+  with_items:
+    - "fdesc /dev/fd fdescfs rw 0 0"
+    - "proc  /proc   procfs  rw 0 0"
+
+- name: make sure there's a wheel group
+  group: name=wheel state=present
+
+- name: make sure there's a user account
+  user: >
+    name={{ ssh_user }}
+    state=present
+    groups=wheel
+    append=yes
+    shell=/usr/local/bin/bash
+
+- name: make sure the wheel group is in the sudoers file
+  lineinfile: >
+    dest=/usr/local/etc/sudoers
+    state=present
+    regexp='^%WHEEL ALL\='
+    line='%WHEEL ALL=(ALL) NOPASSWD:ALL'
+    validate='visudo -cf %s'
+
+- name: make sure user account has our public ssh key
+  authorized_key: >
+    user={{ ssh_user }}
+    key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+- name: Disallow unsafe SSH practices
+  lineinfile: >
+    dest=/etc/ssh/sshd_config
+    regexp="{{ item.regexp }}"
+    line="{{ item.line }}"
+    state=present
+  notify: restart sshd
+  with_items:
+    - { regexp: "^PermitRootLogin", line: "PermitRootLogin no" }
+    - { regexp: "^PasswordAuthentication", line: "PasswordAuthentication no" }
+    - { regexp: "^GSSAPIAuthentication", line: "GSSAPIAuthentication no" }
