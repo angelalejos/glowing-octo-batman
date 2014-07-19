@@ -1,9 +1,9 @@
-Ansible playbooks for a FreeBSD desktop
-=======================================
+Glowing Octo Batman
+===================
 
-TODO: think of a catchy name for this repo
-TODO: description
-TODO: everything else
+- [x] TODO: think of a catchy name for this repo
+- [ ] TODO: description
+- [ ] TODO: everything else
 
 BSD Licensed
 ============
