@@ -1,9 +1,34 @@
+---
 - hosts: all
   tasks:
     - name: install a lot of cool things
       sudo: yes
       pkgng: name={{ item }} state=present
       with_items:
+        - portupgrade
+        - mosh
+        - git
+        - mercurial
+        - tmux
         - xorg
+        - luakit
+        - slim
         - awesome
+        - unclutter
+        - "rxvt-unicode"
+        - mutt
         - clojure
+
+    - name: put important lines in /etc/rc.conf
+      sudo: yes
+      lineinfile: >
+        dest=/etc/rc.conf
+        line="{{ item }}"
+        state=present
+      with_items:
+        - hald_enable="YES"
+        - dbus_enable="YES"
+        - slim_enable="YES"
+
+    - name: xinitrc
+      shell: echo "exec awesome" > ~/.xinitrc
